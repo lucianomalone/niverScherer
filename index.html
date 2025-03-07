@@ -10,6 +10,25 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             emailjs.init("2snQb8rJ3K29Xef1A"); // Substitua pelo seu User ID do EmailJS
+
+            // Monitorar o campo quantidade para atualizar a obrigatoriedade do campo nomes
+            document.getElementById("quantidade").addEventListener("input", function() {
+                verificarObrigatoriedade();
+            });
+
+            function verificarObrigatoriedade() {
+                const quantidade = document.getElementById("quantidade").value;
+                const nomes = document.getElementById("nomes");
+
+                if (quantidade > 1) {
+                    nomes.required = true;
+                    nomes.disabled = false;
+                } else {
+                    nomes.required = false;
+                    nomes.disabled = true;
+                    nomes.value = ""; // Limpa o campo se for desativado
+                }
+            }
         });
 
         function enviarConfirmacao(event) {
@@ -19,8 +38,8 @@
             const quantidade = document.getElementById("quantidade").value;
             const nomes = document.getElementById("nomes").value;
 
-            if (!nome || !quantidade || !nomes) {
-                alert("Por favor, preencha todos os campos!");
+            if (!nome || !quantidade || (quantidade > 1 && !nomes)) {
+                alert("Por favor, preencha todos os campos obrigatórios!");
                 return;
             }
 
@@ -34,6 +53,7 @@
                 .then(response => {
                     alert("Confirmação enviada com sucesso!");
                     document.getElementById("confirmacao-form").reset();
+                    verificarObrigatoriedade(); // Reset da obrigatoriedade ao limpar o formulário
                 })
                 .catch(error => {
                     alert("Erro ao enviar confirmação. Verifique os dados e tente novamente.");
@@ -45,25 +65,24 @@
 <body>
     <div class="jumbotron jumbotron-fluid text-center" style="background-color: black; color: white;">
         <div class="container">
-            <h1 class="display-4">NIVER DA SCHERER</h1>
+            <h1 class="display-4"><strong>NIVER DA SCHERER</strong></h1>
             <p class="lead">Venha fazer parte desta festa, traga sua alegria e disposição e a sede.</p>
         </div>
     </div>
     
     <div class="container">
-        <h2>Confirmação de Presença</h2>
+        <h2><strong>Confirmação de Presença</strong></h2>
         <form id="confirmacao-form" onsubmit="enviarConfirmacao(event)">
             <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required><br><br>
+            <input type="text" id="nome" name="nome" class="form-control" required><br>
 
             <label for="quantidade">Quantidade de Pessoas:</label>
-            <input type="number" id="quantidade" name="quantidade" min="1" required><br><br>
+            <input type="number" id="quantidade" name="quantidade" class="form-control" min="1" required><br>
 
-            <label for="nomes">Nomes dos acompnhantes:</label>
-            <input type="text" id="nomes" name="nomes" required><br><br>
+            <label for="nomes">Nomes dos acompanhantes:</label>
+            <input type="text" id="nomes" name="nomes" class="form-control" disabled><br>
 
-            <button type="submit" class="btn btn-primary">Confirmar Presença</button>
-            
+            <button type="submit" class="btn btn-primary">Confirmar</button>
         </form>
     </div>
 </body>
